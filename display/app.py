@@ -17,18 +17,17 @@ if not app.debug:
     app.logger.addHandler(logging.StreamHandler())
     app.logger.setLevel(logging.INFO)
 
+token = os.environ.get("TOKEN", "".join(random.choice(string.ascii_letters) for i in range(24)))
+app.logger.info("Token: %s" % token)
+
 cors_origins = '*'
 if os.getenv('CORS_ALLOWED_ORIGINS'):
     cors_origins = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
 
 app.logger.info('CORS origins: %s', cors_origins)
-socketio = SocketIO(app, cors_allowed_origins=cors_origins)
+socketio = SocketIO(app, cors_allowed_origins=cors_origins, path='/%s/socket.io' % token)
 
 scripts_dir = os.path.join(os.path.dirname(__file__), "../scripts")
-
-token = os.environ.get("TOKEN", "".join(random.choice(string.ascii_letters) for i in range(24)))
-print("Token: %s" % token)
-
 def run(script):
     s = subprocess.run([os.path.join(scripts_dir, script)], capture_output=True)
     return s.stdout.decode()
@@ -99,6 +98,8 @@ def index_route(tok):
 
 @socketio.on('init')
 def init_message(message):
+    if message['tok'] != token:
+        return
     print('init message:', message)
 
     emit('update', {'ips': get_ips_dict()})
@@ -115,6 +116,8 @@ def run_action(ip, action):
 
 @socketio.on('command')
 def command_message(message):
+    if message['tok'] != token:
+        return
     print('command message:', message)
 
     ip = message.get('ip')

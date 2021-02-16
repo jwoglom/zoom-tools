@@ -7,10 +7,11 @@
 var socket;
 window.ips = {};
 window.statuses = {};
+window.tok = location.pathname.split('/')[1];
 function initSocket() {
-    socket = io();
+    socket = io('', {path: '/' + window.tok + '/socket.io/'});
     socket.on('connect', function() {
-        socket.emit('init', {});
+        socket.emit('init', {'tok': window.tok});
     });
     socket.on('update', function(resp) {
         window.resp = resp;
@@ -86,7 +87,7 @@ function queryAllTask() {
 }
 
 function run(ip, action) {
-    socket.emit('command', {'ip': ip, 'action': action});
+    socket.emit('command', {'ip': ip, 'action': action, 'tok': window.tok});
 }
 
 function toggle(ip, fmt) {
