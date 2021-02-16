@@ -117,6 +117,10 @@ function toggle(ip, fmt) {
 window.onload = initSocket;
     </script>
     <style>
+body {
+    background: black;
+    color: white;
+}
 .mic, .vid {
     font-size: 35px;
     width: 150px;
@@ -134,8 +138,10 @@ window.onload = initSocket;
     <script type='text/template' id='ip-template'>
 <div>
     <h3 title="{ip}">{name}{suffix}</h3>
-    <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')">🎙️ {micShort}</button>
-    <button class='vid {vidStatus} is-{vidShort}' onclick="toggle('{ip}', 'video')">📹 {vidShort}</button>
+    <center>
+        <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')">🎙️ {micShort}</button>
+        <button class='vid {vidStatus} is-{vidShort}' onclick="toggle('{ip}', 'video')">📹 {vidShort}</button>
+    </center>
 </div>
     </script>
 </head>
