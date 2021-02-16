@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>jwoglom.zoomtoolsclient</string>
+    <key>Disabled</key>
+    <false/>
+    <key>ProgramArguments</key>
+    <array>
+        <string>sh</string>
+        <string>-c</string>
+        <string>"$HOME/dotfiles/config/macos-tiling-wm/scripts/zoom-tools/client/run.sh"</string>
+    </array>
+    <key>KeepAlive</key>
+    <dict>
+        <key>Crashed</key>
+        <true/>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>ProcessType</key>
+    <string>Interactive</string>
+    <key>Nice</key>
+    <integer>-5</integer>
+    <key>StandardOutPath</key>
+    <string>/tmp/zoomtoolsclient.out</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/zoomtoolsclient.err</string>
+</dict>
+</plist>
