@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+    <title>ZoomTools Widget</title>
+    <script type='text/javascript' src='static/socket.io.js'></script>
+    <script type='text/javascript'>
+var socket;
+window.ips = {};
+window.statuses = {};
+function initSocket() {
+    socket = io();
+    socket.on('connect', function() {
+        socket.emit('init', {});
+    });
+    socket.on('update', function(resp) {
+        window.resp = resp;
+        update();
+        queryAllTask();
+        initInterval();
+    });
+    socket.on('command_reply', function(resp) {
+        console.log('command_reply:', resp);
+        if (resp['action'] == 'status') {
+            window.statuses[resp['ip']] = resp['response'];
+            update();
+        } else {
+            setTimeout(function() { run(resp['ip'], 'status'); }, 1000);
+        }
+    })
+}
+
+function renderHTML(tplId, dict) {
+    var tpl = document.querySelector("script#" + tplId);
+    var html = tpl.innerHTML;
+    for (var key in dict) {
+        html = html.replace(new RegExp("\\{" + key + "\\}", "g"), dict[key] || '');
+    }
+    return html;
+}
+
+function update() {
+    var resp = window.resp;
+    console.log(JSON.stringify(resp));
+    var html = "";
+    var c = document.getElementById('container');
+    for (var ip in resp["ips"]) {
+        var name = resp["ips"][ip]["name"];
+        if (!name) name = ip;
+        var micStatus, vidStatus, micShort, vidShort, suffix;
+        if (window.statuses[ip]) {
+            var st = window.statuses[ip].split(",");
+            micStatus = st[0].trim();
+            if (micStatus == "Audio on") {
+                micShort = "ON";
+            } else if (micStatus == "Audio off") {
+                micShort = "OFF";
+            } else if (micStatus == "NotRunning") {
+                suffix = " (Not running)";
+            }
+            vidStatus = st[1].trim();
+            if (vidStatus == "Video on") {
+                vidShort = "ON";
+            } else if (vidStatus == "Video off") {
+                vidShort = "OFF";
+            } else if (micStatus == "NotRunning") {
+                suffix = " (Not running)";
+            }
+        }
+        var data = {"ip": ip, "name": name, "suffix": suffix, "micStatus": micStatus, "vidStatus": vidStatus, "micShort": micShort, "vidShort": vidShort};
+        console.log("render:", data);
+        html += renderHTML("ip-template", data);
+    }
+    c.innerHTML = html;
+}
+
+var queryInterval;
+function initInterval() {
+    queryInterval = setInterval(queryAllTask, 10 * 1000);
+}
+
+function queryAllTask() {
+    if (!window.resp) return;
+    for (var ip in window.resp["ips"]) {
+        run(ip, 'status');
+    }
+}
+
+function run(ip, action) {
+    socket.emit('command', {'ip': ip, 'action': action});
+}
+
+function toggle(ip, fmt) {
+    run(ip, fmt+'/toggle');
+}
+
+window.onload = initSocket;
+    </script>
+    <style>
+.mic, .vid {
+    font-size: 35px;
+    width: 150px;
+    height: 75px;
+}
+
+.is-ON {
+    background: green;
+}
+
+.is-OFF {
+    background: red;
+}
+    </style>
+    <script type='text/template' id='ip-template'>
+<div>
+    <h3 title="{ip}">{name}{suffix}</h3>
+    <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')">🎙️ {micShort}</button>
+    <button class='vid {vidStatus} is-{vidShort}' onclick="toggle('{ip}', 'video')">📹 {vidShort}</button>
+</div>
+    </script>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>

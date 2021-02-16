@@ -9,18 +9,26 @@ import os
 
 app = Flask(__name__)
 
-scripts_dir = os.path.join(os.path.dirname(__file__), "scripts")
+scripts_dir = os.path.join(os.path.dirname(__file__), "../scripts")
 
-token = os.environ.get("TOKEN", "".join(random.choice(string.ascii_letters) for i in range(8)))
+token = os.environ.get("TOKEN", "".join(random.choice(string.ascii_letters) for i in range(24)))
+try:
+    from secrets import SELF_TOKEN
+    token = SELF_TOKEN
+except ImportError:
+    pass
+
 print("Token: %s" % token)
 
 @app.before_request
 def is_token_set():
     provided_token = request.args.get("token") or request.form.get("token")
     if provided_token != token:
+        print("Provided invalid token %s" % provided_token)
         abort(403)
 
 def run(script):
+    print(os.path.join(scripts_dir, script))
     s = subprocess.run([os.path.join(scripts_dir, script)], capture_output=True)
     return s.stdout.decode()
 

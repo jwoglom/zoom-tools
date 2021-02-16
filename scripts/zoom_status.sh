@@ -18,8 +18,8 @@ if application "zoom.us" is running then
       end tell
   end tell
 else
-  set muteReturnValue to ""
-  set videoReturnValue to ""
+  set muteReturnValue to "NotRunning"
+  set videoReturnValue to "NotRunning"
 end if
 
 return {muteReturnValue, videoReturnValue}'
