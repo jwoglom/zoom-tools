@@ -46,7 +46,6 @@ function update() {
     var c = document.getElementById('container');
     var i = 0;
     for (var ip in resp["ips"]) {
-        i++;
         var name = resp["ips"][ip]["name"];
         if (!name) name = ip;
         var micStatus, vidStatus, micShort, vidShort, suffix;
@@ -71,6 +70,9 @@ function update() {
                 suffix = " (Not running)";
                 containerStatus = "NotRunning";
             }
+        }
+        if (containerStatus == "Running") {
+            i++;
         }
         var data = {"ip": ip, "name": name, "suffix": suffix, "micStatus": micStatus, "vidStatus": vidStatus, "micShort": micShort, "vidShort": vidShort, "containerStatus": containerStatus};
         console.log("render:", data);
@@ -159,12 +161,13 @@ h3 {
     height: 100vh;
     background: none;
     margin: 0;
+    border: 0;
 }
     </style>
     <script type='text/template' id='ip-template'>
 <div>
     <h3 title="{ip}">{name}{suffix}</h3>
-    <div style='container-{containerStatus}'>
+    <div class='container-{containerStatus}'>
     <center>
         <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')">🎙️ {micShort}</button>
         <button class='vid {vidStatus} is-{vidShort}' onclick="toggle('{ip}', 'video')">📹 {vidShort}</button>
