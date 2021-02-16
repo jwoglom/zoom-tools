@@ -136,6 +136,13 @@ body {
 
 h3 {
     margin: 20px;
+    font-size: 1.2em;
+}
+
+.zoom-icon {
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
 }
 
 .mic, .vid {
@@ -166,7 +173,7 @@ h3 {
     </style>
     <script type='text/template' id='ip-template'>
 <div>
-    <h3 title="{ip}">{name}{suffix}</h3>
+    <h3 title="{ip}"><img class="zoom-icon" src="/static/zoom-icon.png" /> {name}{suffix}</h3>
     <div class='container-{containerStatus}'>
     <center>
         <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')">🎙️ {micShort}</button>
