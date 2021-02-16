@@ -11,5 +11,6 @@ flask = "*"
 gunicorn = {extras = ["eventlet"],version = "*"}
 eventlet = "*"
 requests = "*"
+flask-cors = "*"
 
 [requires]

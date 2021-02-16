@@ -2,6 +2,7 @@
 
 from flask import Flask, Response, request, abort, render_template, jsonify
 from flask_socketio import SocketIO, emit
+from flask_cors import CORS
 
 import requests
 import random
@@ -23,6 +24,7 @@ app.logger.info("Token: %s" % token)
 cors_origins = '*'
 if os.getenv('CORS_ALLOWED_ORIGINS'):
     cors_origins = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+CORS(app, origins=cors_origins)
 
 app.logger.info('CORS origins: %s', cors_origins)
 socketio = SocketIO(app, cors_allowed_origins=cors_origins, path='/%s/socket.io' % token)
