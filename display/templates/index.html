@@ -136,6 +136,7 @@ body {
 
 h3 {
     margin: 20px;
+    margin-bottom: 10px;
     font-size: 1.2em;
 }
 
@@ -151,6 +152,15 @@ h3 {
     height: 75px;
 }
 
+button > span {
+    display: inline-block;
+    width: 40px;
+}
+
+button:first-child {
+    margin-right: 10px;
+}
+
 .is-ON {
     background: green;
 }
@@ -161,6 +171,10 @@ h3 {
 
 .container-NotRunning {
     display: none;
+}
+
+.container-Running {
+    margin-top: 10px;
 }
 
 #iframe {
@@ -176,8 +190,8 @@ h3 {
     <h3 title="{ip}"><img class="zoom-icon" src="/static/zoom-icon.png" /> {name}{suffix}</h3>
     <div class='container-{containerStatus}'>
     <center>
-        <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')">🎙️ {micShort}</button>
-        <button class='vid {vidStatus} is-{vidShort}' onclick="toggle('{ip}', 'video')">📹 {vidShort}</button>
+        <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')"><span>🎙️</span> {micShort}</button>
+        <button class='vid {vidStatus} is-{vidShort}' onclick="toggle('{ip}', 'video')"><span>📹</span> {vidShort}</button>
     </center>
     </div>
 </div>
