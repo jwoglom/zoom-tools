@@ -75,8 +75,23 @@ function update() {
     }
     if (i == 0) {
         window.statuses = {};
+        html = renderEmpty();
     }
     c.innerHTML = html;
+}
+
+function renderEmpty() {
+    var s = location.search;
+    if (s.indexOf('iframe=') != -1) {
+        var ifr = s.split('iframe=')[1];
+        var i = document.createElement('iframe');
+        i.src = unescape(ifr);
+        i.setAttribute('style', 'width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; background: none');
+        i.setAttribute('allowtransparency', 'true');
+        i.setAttribute('scrolling', 'no');
+        return i.outerHTML;
+    }
+    return '';
 }
 
 var queryInterval;
