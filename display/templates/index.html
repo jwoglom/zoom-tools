@@ -44,7 +44,9 @@ function update() {
     console.log(JSON.stringify(resp));
     var html = "";
     var c = document.getElementById('container');
+    var i = 0;
     for (var ip in resp["ips"]) {
+        i++;
         var name = resp["ips"][ip]["name"];
         if (!name) name = ip;
         var micStatus, vidStatus, micShort, vidShort, suffix;
@@ -70,6 +72,9 @@ function update() {
         var data = {"ip": ip, "name": name, "suffix": suffix, "micStatus": micStatus, "vidStatus": vidStatus, "micShort": micShort, "vidShort": vidShort};
         console.log("render:", data);
         html += renderHTML("ip-template", data);
+    }
+    if (i == 0) {
+        window.statuses = {};
     }
     c.innerHTML = html;
 }
