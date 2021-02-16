@@ -2,3 +2,4 @@ __pycache__
 *.pyc
 client/secret*
 client/*.log
+.DS_Store

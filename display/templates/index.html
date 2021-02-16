@@ -50,6 +50,7 @@ function update() {
         var name = resp["ips"][ip]["name"];
         if (!name) name = ip;
         var micStatus, vidStatus, micShort, vidShort, suffix;
+        var containerStatus = "Running";
         if (window.statuses[ip]) {
             var st = window.statuses[ip].split(",");
             micStatus = st[0].trim();
@@ -59,6 +60,7 @@ function update() {
                 micShort = "OFF";
             } else if (micStatus == "NotRunning") {
                 suffix = " (Not running)";
+                containerStatus = "NotRunning";
             }
             vidStatus = st[1].trim();
             if (vidStatus == "Video on") {
@@ -67,31 +69,37 @@ function update() {
                 vidShort = "OFF";
             } else if (micStatus == "NotRunning") {
                 suffix = " (Not running)";
+                containerStatus = "NotRunning";
             }
         }
-        var data = {"ip": ip, "name": name, "suffix": suffix, "micStatus": micStatus, "vidStatus": vidStatus, "micShort": micShort, "vidShort": vidShort};
+        var data = {"ip": ip, "name": name, "suffix": suffix, "micStatus": micStatus, "vidStatus": vidStatus, "micShort": micShort, "vidShort": vidShort, "containerStatus": containerStatus};
         console.log("render:", data);
         html += renderHTML("ip-template", data);
+        if (containerStatus == "NotRunning") {
+            document.getElementById('iframe').style.display = '';
+        } else {
+            document.getElementById('iframe').style.display = 'none';
+        }
     }
     if (i == 0) {
         window.statuses = {};
-        html = renderEmpty();
+        renderEmpty(true);
+    } else {
+        renderEmpty(false);
     }
     c.innerHTML = html;
 }
 
-function renderEmpty() {
+function renderEmpty(disp) {
     var s = location.search;
     if (s.indexOf('iframe=') != -1) {
         var ifr = s.split('iframe=')[1];
-        var i = document.createElement('iframe');
-        i.src = unescape(ifr);
-        i.setAttribute('style', 'width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; background: none');
-        i.setAttribute('allowtransparency', 'true');
-        i.setAttribute('scrolling', 'no');
-        return i.outerHTML;
+        var i = document.getElementById('iframe');
+        i.style.display = disp ? '' : 'none';
+        if (disp && i.src != unescape(ifr)) {
+            i.src = unescape(ifr);
+        }
     }
-    return '';
 }
 
 var queryInterval;
@@ -120,7 +128,14 @@ window.onload = initSocket;
 body {
     background: black;
     color: white;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 0;
 }
+
+h3 {
+    margin: 20px;
+}
+
 .mic, .vid {
     font-size: 35px;
     width: 150px;
@@ -134,18 +149,32 @@ body {
 .is-OFF {
     background: red;
 }
+
+.container-NotRunning {
+    display: none;
+}
+
+#iframe {
+    width: 100vw;
+    height: 100vh;
+    background: none;
+    margin: 0;
+}
     </style>
     <script type='text/template' id='ip-template'>
 <div>
     <h3 title="{ip}">{name}{suffix}</h3>
+    <div style='container-{containerStatus}'>
     <center>
         <button class='mic {micStatus} is-{micShort}' onclick="toggle('{ip}', 'audio')">🎙️ {micShort}</button>
         <button class='vid {vidStatus} is-{vidShort}' onclick="toggle('{ip}', 'video')">📹 {vidShort}</button>
     </center>
+    </div>
 </div>
     </script>
 </head>
 <body>
     <div id="container"></div>
+    <iframe id="iframe" src="about:blank" allowtransparency=true scrolling=no></iframe>
 </body>
 </html>
